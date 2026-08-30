@@ -1,0 +1,52 @@
+http:
+  middlewares:
+    compress:
+      compress:
+        excludedContentTypes:
+          - image/png
+          - image/jpeg
+          - image/webp
+          - image/avif
+
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 200
+
+    security-headers:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        contentTypeNosniff: true
+        frameDeny: true
+        referrerPolicy: "strict-origin-when-cross-origin"
+
+  routers:
+    api:
+      rule: "Host(`api.${DOMAIN:-localhost}`)"
+      service: api
+      entryPoints:
+        - websecure
+      middlewares:
+        - compress
+        - security-headers
+
+    web:
+      rule: "Host(`${DOMAIN:-localhost}`)"
+      service: web
+      entryPoints:
+        - websecure
+      middlewares:
+        - compress
+        - security-headers
+
+  services:
+    api:
+      loadBalancer:
+        servers:
+          - url: "http://api:8000"
+
+    web:
+      loadBalancer:
+        servers:
+          - url: "http://web:3000"
