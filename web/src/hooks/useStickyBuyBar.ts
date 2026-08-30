@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from "react";
 
+/** px gap between show/hide thresholds to prevent IO flicker at the boundary */
+const COMPACT_ON_BELOW = -12;
+const COMPACT_OFF_ABOVE = 12;
+
 /**
  * Tracks when the in-flow buy block leaves the viewport (IntersectionObserver).
- * Returns true when the compact sticky buy bar should be shown.
+ * Uses hysteresis so isCompact does not flicker at the scroll boundary.
  */
 export function useStickyBuyBar(triggerEl: HTMLElement | null): boolean {
   const [isCompact, setIsCompact] = useState(false);
@@ -17,8 +21,12 @@ export function useStickyBuyBar(triggerEl: HTMLElement | null): boolean {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Compact when the buy block is fully above the viewport
-        setIsCompact(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+        const top = entry.boundingClientRect.top;
+        setIsCompact((prev) => {
+          if (!prev && !entry.isIntersecting && top < COMPACT_ON_BELOW) return true;
+          if (prev && (entry.isIntersecting || top > COMPACT_OFF_ABOVE)) return false;
+          return prev;
+        });
       },
       { threshold: 0, rootMargin: "0px" },
     );

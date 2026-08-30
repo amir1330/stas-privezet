@@ -390,6 +390,13 @@
     background: #fff;
   }
 
+  @media (min-width: 640px) {
+    .product-size-bar {
+      flex-shrink: 0;
+      max-width: 15rem;
+    }
+  }
+
   .product-size-bar__label {
     display: flex;
     align-items: center;

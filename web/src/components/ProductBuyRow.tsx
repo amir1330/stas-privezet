@@ -43,10 +43,10 @@ export function ProductBuyRow({
 
   return (
     <div className="product-buy-block">
-      <SizeSelector variants={inStock} selected={selected} onSelectSize={onSelectSize} />
-
       <div ref={buyTriggerRef} className="product-buy-trigger">
         <div className="product-buy-row">
+          <SizeSelector variants={inStock} selected={selected} onSelectSize={onSelectSize} />
+
           <PriceDeliveryBox priceKrw={priceKrw} />
 
           <InstallmentBuyPill

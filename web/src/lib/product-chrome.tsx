@@ -73,8 +73,9 @@ export function ProductChromeProvider({ children }: { children: ReactNode }) {
   return (
     <ProductChromeContext.Provider value={value}>
       {children}
-      {purchase && isCompact && (
+      {purchase && (
         <StickyBuyBar
+          isCompact={isCompact}
           selectedSize={purchase.selectedSize}
           priceKrw={purchase.priceKrw}
           loading={purchase.loading}
